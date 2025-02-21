@@ -8,7 +8,11 @@ import android.widget.Button
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.textfield.TextInputEditText
 
-class CreateCategoryBottomSheet : BottomSheetDialogFragment() {
+class CreateCategoryBottomSheet(
+    private val onCreateClicked: (String) -> Unit
+) : BottomSheetDialogFragment() {
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -16,9 +20,14 @@ class CreateCategoryBottomSheet : BottomSheetDialogFragment() {
     ): View? {
         val view = inflater.inflate(R.layout.create_category_bottom_sheet, container, false)
 
-       val btnCreate = view.findViewById<Button>(R.id.btn_creat)
-       val tieCategoryName = view.findViewById<TextInputEditText>(R.id.tie_category_creat)
+        val btnCreate = view.findViewById<Button>(R.id.btn_creat)
+        val tieCategoryName = view.findViewById<TextInputEditText>(R.id.tie_category_creat)
 
+        btnCreate.setOnClickListener {
+            val name = tieCategoryName.text.toString()
+            onCreateClicked.invoke(name)
+            dismiss()
+        }
         return view
     }
 }
