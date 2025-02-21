@@ -76,7 +76,14 @@ class MainActivity : AppCompatActivity() {
                     name = it.name,
                     isSelected = it.isSelected
                 )
-            }
+            }.toMutableList()
+
+            categoriesUiData.add(
+                CategoryUiData(
+                    name = "+",
+                    isSelected = false
+                )
+            )
             GlobalScope.launch(Dispatchers.Main) {
                 adapter.submitList(categoriesUiData)
             }
