@@ -45,6 +45,7 @@ class CreateOrUpdateTaskBottomSheet(
             if( taskCategory !=null){
                 onCreateClicked.invoke(
                     TaskUiData(
+                        id = 0,
                         name = name,
                         category = requireNotNull(taskCategory)
                     )
