@@ -51,6 +51,14 @@ class MainActivity : AppCompatActivity() {
             showCreateOrUpdateTaskBottomSheet(task)
         }
 
+        categoryAdapter.setOnLongClickListener { categoryToBeDeleted ->
+            val categoryEntityToBeDeleted = CategoryEntity(
+                    name = categoryToBeDeleted.name,
+                    isSelected = categoryToBeDeleted.isSelected
+            )
+            deleteCategory(categoryEntityToBeDeleted)
+        }
+
         categoryAdapter.setOnClickListener { selected ->
             if (selected.name == "+") {
                 val createCategoryBottomSheet = CreateCategoryBottomSheet { categoryName ->
@@ -148,6 +156,13 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    private fun deleteCategory(categoryEntity: CategoryEntity) {
+        GlobalScope.launch(Dispatchers.IO) {
+            categoryDao.delete(categoryEntity)
+            getTasksFromDataBase()
+        }
+    }
+
     private fun insertTask(taskEntity: TaskEntity) {
         GlobalScope.launch(Dispatchers.IO) {
             taskdao.insert(taskEntity)
@@ -158,6 +173,14 @@ class MainActivity : AppCompatActivity() {
     private fun updateTask(taskEntity: TaskEntity) {
         GlobalScope.launch(Dispatchers.IO) {
             taskdao.update(taskEntity)
+            getTasksFromDataBase()
+
+        }
+    }
+
+    private fun deleteTask(taskEntity: TaskEntity) {
+        GlobalScope.launch(Dispatchers.IO) {
+            taskdao.delete(taskEntity)
             getTasksFromDataBase()
 
         }
@@ -181,7 +204,15 @@ class MainActivity : AppCompatActivity() {
                     name = taskToBeUpdated.name,
                     category = taskToBeUpdated.category
                 )
-                    updateTask(taskEntityToBeUpdate)
+                updateTask(taskEntityToBeUpdate)
+            },
+            onDeleteClicked = { taskTobeDeleted ->
+                val taskEntityToBeDelete = TaskEntity(
+                    id = taskTobeDeleted.id,
+                    name = taskTobeDeleted.name,
+                    category = taskTobeDeleted.category
+                )
+                deleteTask(taskEntityToBeDelete)
             }
         )
         createTaskBottomSheet.show(supportFragmentManager, "createTaskBottomSheet")
