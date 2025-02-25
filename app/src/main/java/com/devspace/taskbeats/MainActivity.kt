@@ -155,17 +155,35 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun updateTask(taskEntity: TaskEntity) {
+        GlobalScope.launch(Dispatchers.IO) {
+            taskdao.update(taskEntity)
+            getTasksFromDataBase()
+
+        }
+    }
+
     private fun showCreateOrUpdateTaskBottomSheet(taskUiData: TaskUiData? = null) {
         val createTaskBottomSheet = CreateOrUpdateTaskBottomSheet(
             task = taskUiData,
-            categoryList = categories
-        ) { taskToBeCreated ->
-            val tasEntityToBeCreatedInsert = TaskEntity(
-                name = taskToBeCreated.name,
-                category = taskToBeCreated.category
-            )
-            insertTask(tasEntityToBeCreatedInsert)
-        }
+            categoryList = categories,
+            onCreateClicked = { taskToBeCreated ->
+                val taskEntityToBeCreatedInsert = TaskEntity(
+                    name = taskToBeCreated.name,
+                    category = taskToBeCreated.category
+                )
+                insertTask(taskEntityToBeCreatedInsert)
+
+            },
+            onUpdateClicked = { taskToBeUpdated ->
+                val taskEntityToBeUpdate = TaskEntity(
+                    id = taskToBeUpdated.id,
+                    name = taskToBeUpdated.name,
+                    category = taskToBeUpdated.category
+                )
+                    updateTask(taskEntityToBeUpdate)
+            }
+        )
         createTaskBottomSheet.show(supportFragmentManager, "createTaskBottomSheet")
 
     }
