@@ -20,4 +20,5 @@ interface CategoryDao {
 
     @Delete
     fun delete(categoryEntity: CategoryEntity)
+
 }
