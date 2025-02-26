@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity() {
 
     private var categories = listOf<CategoryUiData>()
+    private var categoriesEntities = listOf<CategoryEntity>()
     private var tasks = listOf<TaskUiData>()
 
     private val categoryAdapter = CategoryListAdapter()
@@ -52,7 +53,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         categoryAdapter.setOnLongClickListener { categoryToBeDeleted ->
-            if (categoryToBeDeleted.name != "+") {
+            if (categoryToBeDeleted.name != "+" && categoryToBeDeleted.name != "ALL") {
                 val title: String = this.getString(R.string.category_delete_title)
                 val description: String = this.getString(R.string.category_delete_description)
                 val btnText: String = this.getString(R.string.delete)
@@ -136,6 +137,7 @@ class MainActivity : AppCompatActivity() {
     private fun getCategoriesFromDataBase() {
         GlobalScope.launch(Dispatchers.IO) {
             val categoriesFromDb: List<CategoryEntity> = categoryDao.getAll()
+            categoriesEntities = categoriesFromDb
             val categoriesUiData = categoriesFromDb.map {
                 CategoryUiData(
                     name = it.name,
@@ -242,7 +244,7 @@ class MainActivity : AppCompatActivity() {
     private fun showCreateOrUpdateTaskBottomSheet(taskUiData: TaskUiData? = null) {
         val createTaskBottomSheet = CreateOrUpdateTaskBottomSheet(
             task = taskUiData,
-            categoryList = categories,
+            categoryList = categoriesEntities,
             onCreateClicked = { taskToBeCreated ->
                 val taskEntityToBeCreatedInsert = TaskEntity(
                     name = taskToBeCreated.name,
